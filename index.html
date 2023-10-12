@@ -411,7 +411,7 @@ function loadFromFile() {
         const file = event.target.files[0];
 
         if (file) {
-            jsonParts = [{"parts": []}];
+            removePart("cube");
             const reader = new FileReader();
 
             reader.onload = function (e) {
@@ -444,6 +444,20 @@ function loadFromFile() {
 
     // Simular un clic en el control de entrada de archivo
     input.click();
+}
+
+function removePart(part_id){
+  for (var i = 0; i < jsonData.length; i++) {
+    var model = jsonData[i];
+    if (model.parts) {
+      for (var j = 0; j < model.parts.length; j++) {
+        if (model.parts[j].mesh_id === part_id) {
+          model.parts.splice(j, 1);
+          break; // Romper el bucle cuando se encuentre el elemento para eliminar
+        }
+      }
+    }
+  }
 }
     </script>
 </body>
