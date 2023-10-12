@@ -447,8 +447,8 @@ function loadFromFile() {
 }
 
 function removePart(part_id){
-  for (var i = 0; i < jsonData.length; i++) {
-    var model = jsonData[i];
+  for (var i = 0; i < jsonParts.length; i++) {
+    var model = jsonParts[i];
     if (model.parts) {
       for (var j = 0; j < model.parts.length; j++) {
         if (model.parts[j].mesh_id === part_id) {
