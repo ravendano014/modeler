@@ -76,7 +76,6 @@
         <button id="cut-button">Cut (Ctrl+X)</button>
         <button id="paste-button">Paste (Ctrl+V)</button>
         <br><br>
-        <button id="downloadJsonButton">Descargar JSON</button>
         <img src="model.jpg" alt="" width="200" height="200">
     </div>
   <canvas id="renderCanvas"></canvas>
@@ -273,7 +272,7 @@ function downloadJson() {
   URL.revokeObjectURL(url);
 }
 
-document.getElementById("downloadJsonButton").addEventListener("click", downloadJson);
+document.getElementById("saveButton").addEventListener("click", downloadJson);
 
 document.addEventListener("keydown", function (event) {
     if (event.key === "z") {
@@ -461,6 +460,10 @@ function removePart(part_id){
       }
     }
   }
+}
+
+function createNewModel(){
+    window.location.reload();
 }
     </script>
 </body>
