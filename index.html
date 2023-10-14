@@ -241,6 +241,7 @@
 
 function downloadJson() {
   // console.log(scene);
+  console.log(jsonParts);
   const updatedParts = jsonParts[0].parts.map((part) => {
     const mesh = scene.getMeshByID(part.mesh_id);
     return {
@@ -377,9 +378,7 @@ function cutPart() {
 function pastePart() {
     if (pickedMesh) {
          if (copiedOrCutData) {
-          jsonParts.push(copiedPartData);
-          //console.log(copiedPartData);
-
+          jsonParts[0].parts.push(copiedPartData);
           loadAndPositionPart(copiedPartData, partsURL);
         }
    }
