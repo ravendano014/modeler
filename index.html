@@ -215,22 +215,26 @@
                     break;
                 }
 
-                var partIndex = jsonParts[0].parts.findIndex(function (jsonPart) {
-                return jsonPart.mesh_id === pickedMesh.id;
-                });
-
-                if (partIndex !== -1) {
-                    var updatedPart = jsonParts[0].parts[partIndex];
-                    updatedPart.position[0].x = pickedMesh.position.x;
-                    updatedPart.position[0].y = pickedMesh.position.y;
-                    updatedPart.position[0].z = pickedMesh.position.z;
-                    updatedPart.rotation[0].x = BABYLON.Tools.ToDegrees(pickedMesh.rotation.x);
-                    updatedPart.rotation[0].y = BABYLON.Tools.ToDegrees(pickedMesh.rotation.y);
-                    updatedPart.rotation[0].z = BABYLON.Tools.ToDegrees(pickedMesh.rotation.z);
-                    if(pickedMesh.material.diffuseColor){
-                        updatedPart.color[0] = pickedMesh.material.diffuseColor;
+                if(pickedMesh){
+                    var partIndex = jsonParts[0].parts.findIndex(function (jsonPart) {
+                    return jsonPart.mesh_id === pickedMesh.id;
+                    });
+                }
+                if(partIndex){
+                    if (partIndex !== -1) {
+                        var updatedPart = jsonParts[0].parts[partIndex];
+                        updatedPart.position[0].x = pickedMesh.position.x;
+                        updatedPart.position[0].y = pickedMesh.position.y;
+                        updatedPart.position[0].z = pickedMesh.position.z;
+                        updatedPart.rotation[0].x = BABYLON.Tools.ToDegrees(pickedMesh.rotation.x);
+                        updatedPart.rotation[0].y = BABYLON.Tools.ToDegrees(pickedMesh.rotation.y);
+                        updatedPart.rotation[0].z = BABYLON.Tools.ToDegrees(pickedMesh.rotation.z);
+                        if(pickedMesh.material.diffuseColor){
+                            updatedPart.color[0] = pickedMesh.material.diffuseColor;
+                        }
                     }
                 }
+
                 // console.log(jsonParts);
 
                 });
@@ -241,24 +245,27 @@
 
 function downloadJson() {
   // console.log(scene);
-  console.log(jsonParts);
+  // console.log(jsonParts);
   const updatedParts = jsonParts[0].parts.map((part) => {
-    const mesh = scene.getMeshByID(part.mesh_id);
-    return {
-      mesh_id: part.mesh_id,
-      mesh_name: part.mesh_name,
-      position:  [{
-        x: mesh.position.x,
-        y: mesh.position.y,
-        z: mesh.position.z,
-      }],
-      rotation: [{
-        x: BABYLON.Tools.ToDegrees(mesh.rotation.x),
-        y: BABYLON.Tools.ToDegrees(mesh.rotation.y),
-        z: BABYLON.Tools.ToDegrees(mesh.rotation.z),
-      }],
-      color: [mesh.material.diffuseColor]
-    };
+    if(part){
+        // console.log(part);
+        const mesh = scene.getMeshByID(part.mesh_id);
+        return {
+        mesh_id: part.mesh_id,
+        mesh_name: part.mesh_name,
+        position:  [{
+            x: mesh.position.x,
+            y: mesh.position.y,
+            z: mesh.position.z,
+        }],
+        rotation: [{
+            x: BABYLON.Tools.ToDegrees(mesh.rotation.x),
+            y: BABYLON.Tools.ToDegrees(mesh.rotation.y),
+            z: BABYLON.Tools.ToDegrees(mesh.rotation.z),
+        }],
+        color: [mesh.material.diffuseColor]
+        };
+    }
   });
 
   const jsonContent = JSON.stringify(updatedParts, null, 2);
@@ -363,15 +370,7 @@ function copyPart() {
 
 function cutPart() {
     if (pickedMesh) {
-        copiedOrCutData = { ...pickedMesh }; 
-        const index = jsonParts.indexOf(pickedMesh);
-        if (index !== -1) {
-            jsonParts.splice(index, 1);
-        }
-        scene.removeMesh(pickedMesh);
-        pickedMesh.dispose();
-        pickedMesh = null;
-        
+        removePart(pickedMesh.id);
     }
 }
 
