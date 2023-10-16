@@ -77,6 +77,31 @@
         <button id="paste-button">Paste (Ctrl+V)</button>
         <br><br>
         <img src="model.jpg" alt="" width="200" height="200">
+        <br><br>
+        <h2>Modify Object Properties</h2>
+        <strong>Selected:</strong> <span id="selectedname"></span>
+        <h2>Position</h2>
+        <label for="positionX">X Pos:</label>
+        <input type="number" id="positionX">
+        <label for="positionY">Y Pos:</label>
+        <input type="number" id="positionY">
+        <label for="positionZ">Z Pos:</label>
+        <input type="number" id="positionZ">
+        <button id="updatePosition">Update Position</button>
+        <h2>Rotation</h2>
+        <label for="rotationX">X:</label>
+        <input type="number" id="rotationX">
+        <label for="rotationY">Y:</label>
+        <input type="number" id="rotationY">
+        <label for="rotationZ">Z:</label>
+        <input type="number" id="rotationZ">
+        <button id="updateRotation">Update Rotation</button>
+        <h2>Modify Color</h2>
+        <label for="colorPicker">Choose Color:</label>
+        <input type="color" id="colorPicker2">
+        <button id="updateColor">Update Color</button>
+        <button id="setColor">Set Color</button>
+      </div>
     </div>
   <canvas id="renderCanvas"></canvas>
   <script src="https://cdn.babylonjs.com/babylon.js"></script>
@@ -123,8 +148,22 @@
 }];
 
         const localAxes = new BABYLON.AxesViewer(scene, 1);
+        let selectedMesh = null;
 
-        function loadAndPositionPart(part, meshURL) {
+          // Obtener referencias a los controles HTML
+        const positionXInput = document.getElementById('positionX');
+        const positionYInput = document.getElementById('positionY');
+        const positionZInput = document.getElementById('positionZ');
+        const updatePositionButton = document.getElementById('updatePosition');
+        const rotationXInput = document.getElementById('rotationX');
+        const rotationYInput = document.getElementById('rotationY');
+        const rotationZInput = document.getElementById('rotationZ');
+        const updateRotationButton = document.getElementById('updateRotation');
+        const colorPicker2 = document.getElementById('colorPicker2');
+        const updateColorButton = document.getElementById('updateColor');
+        const setColorButton = document.getElementById('setColor');
+
+        function loadAndPositionPart(part, meshURL, mat) {
             var meshName = part.mesh_name;
 
             BABYLON.SceneLoader.ImportMesh("", meshURL, meshName, scene, function (meshes) {
@@ -133,9 +172,65 @@
                 meshes[0].position = new BABYLON.Vector3(part.position[0].x, part.position[0].y, part.position[0].z);
                 meshes[0].rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(part.rotation[0].x), BABYLON.Tools.ToRadians(part.rotation[0].y), BABYLON.Tools.ToRadians(part.rotation[0].z));
             
-                meshes[0].material = new BABYLON.StandardMaterial("material", scene);
-                meshes[0].material.diffuseColor = new BABYLON.Color3.FromHexString(rgbToHex(part.color[0].r*255, part.color[0].g*255, part.color[0].b*255));
-            
+                if(mat){
+                    switch (mat)
+                    {
+                        case 1:
+                        var sphereMtl = new BABYLON.PBRMaterial("sphereMtl", scene);
+                        sphereMtl.albedoColor = new BABYLON.Color3.FromHexString(rgbToHex(part.color[0].r*255, part.color[0].g*255, part.color[0].b*255));
+                        sphereMtl.metallic = 0;
+                        sphereMtl.roughness = 1;
+                        sphereMtl.environmentBRDFTexture = new BABYLON.Texture("https://assets.babylonjs.com/environments/fullFloatEnvironmentBrdf.dds", scene, true, false);
+                        sphereMtl.environmentBRDFTexture.wrapU = BABYLON.Texture.CLAMP_ADDRESSMODE;
+                        sphereMtl.environmentBRDFTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE;
+                        meshes[0].material = sphereMtl;
+                        break;
+                        case 2:
+                        var textureResolution = 512;
+                        var textureGround = new BABYLON.DynamicTexture("dynamic texture", textureResolution, scene);   
+                        var textureContext = textureGround.getContext();
+                        
+                        var materialGround = new BABYLON.StandardMaterial("Mat", scene);    				
+                        materialGround.diffuseTexture = textureGround;
+                        meshes[0].material = materialGround;
+                        
+                        
+                        var img = new Image();
+                        img.src = 'https://doc.babylonjs.com/img/resources/textures_thumbs/grass.png.jpg';
+                        img.onload = function() {
+                            //Add image to dynamic texture
+                            textureContext.drawImage(this, 0, 0);
+                            textureGround.update();
+                        }	
+                        break;
+                        case 3:
+                        var meshMat = new BABYLON.StandardMaterial("meshMat", scene);
+                        meshMat.Color = new BABYLON.Color4(233, 7, 7);
+                        //meshMat.diffuseColor  = new BABYLON.Color4(233, 7, 7);
+                        //meshMat.emissiveColor = new BABYLON.Color4(255, 0, 0);
+                        //meshMat.specularColor = new BABYLON.Color4(255, 0, 0);
+                        meshes[0].material = meshMat;
+                        break;
+                        case 4:
+                        var materialPlane = new BABYLON.StandardMaterial("texturePlane", scene);
+                        materialPlane.diffuseTexture = new BABYLON.Texture("https://doc.babylonjs.com/img/resources/textures_thumbs/grass.png.jpg", scene);
+                        materialPlane.diffuseTexture.uScale = 2.0; //Repeat 5 times on the Vertical Axes
+                        materialPlane.diffuseTexture.vScale = 2.0; //Repeat 5 times on the Horizontal Axes
+
+                        meshes[0].material = materialPlane;
+                        break;
+                        case 5:
+                        const cushionMat = new BABYLON.StandardMaterial("cushionMat");
+                        cushionMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/aprilspeight/workshop-babylonjs/gh-pages/textures/linen.jpg");
+                        meshes[0].material = cushionMat;
+                        break;
+                    }
+
+                } else {
+                    meshes[0].material = new BABYLON.StandardMaterial("material", scene);
+                    meshes[0].material.diffuseColor = new BABYLON.Color3.FromHexString(rgbToHex(part.color[0].r*255, part.color[0].g*255, part.color[0].b*255));
+                }
+
             });
         }
 
@@ -168,11 +263,19 @@
                 pickedMesh.edgesColor = new BABYLON.Color4(0, 1, 0.87);
                 pickedMesh.enableEdgesRendering();
                 selectedMesh = pickedMesh;
-
+                // console.log(selectedMesh);
                 document.getElementById("name").textContent = pickedMesh.name;
+                document.getElementById("selectedname").textContent = pickedMesh.name;
                 document.getElementById("position").textContent = `X: ${pickedMesh.position.x.toFixed(2)}, Y: ${pickedMesh.position.y.toFixed(2)}, Z: ${pickedMesh.position.z.toFixed(2)}`;
+                positionXInput.value = pickedMesh.position.x.toFixed(2);
+                positionYInput.value = pickedMesh.position.y.toFixed(2);
+                positionZInput.value = pickedMesh.position.z.toFixed(2);
                 document.getElementById("rotation").textContent = `X: ${BABYLON.Tools.ToDegrees(pickedMesh.rotation.x).toFixed(2)}°, Y: ${BABYLON.Tools.ToDegrees(pickedMesh.rotation.y).toFixed(2)}°, Z: ${BABYLON.Tools.ToDegrees(pickedMesh.rotation.z).toFixed(2)}°`;
+                rotationXInput.value = BABYLON.Tools.ToDegrees(pickedMesh.rotation.x).toFixed(2);
+                rotationYInput.value = BABYLON.Tools.ToDegrees(pickedMesh.rotation.y).toFixed(2);
+                rotationZInput.value = BABYLON.Tools.ToDegrees(pickedMesh.rotation.z).toFixed(2);
                 document.getElementById("color").textContent = `Color: ${pickedMesh.material ? pickedMesh.material.diffuseColor.toString() : "N/A"}`;
+                colorPicker2.value = rgbToHexDiffuse(pickedMesh.material.diffuseColor);
 
                 window.addEventListener("keydown", function (event) {
                 var speed = 0.01;
@@ -286,6 +389,12 @@ document.addEventListener("keydown", function (event) {
     if (event.key === "z") {
         changeColor();
     }
+    if (event.key === "x") {
+        updatePosition();
+    }
+    if (event.key === "c") {
+        updateRotation();
+    }
     if (event.ctrlKey) {
         if (event.key === 'c' || event.key === 'C') {
             copyPart();
@@ -337,6 +446,24 @@ function hexToRgb(hex) {
     
     throw new Error("#000000");
 }
+
+function rgbToHexDiffuse(color) {
+  // Asegúrate de que los valores R, G y B están en el rango [0, 1]
+  const r = Math.min(1, Math.max(0, color.r));
+  const g = Math.min(1, Math.max(0, color.g));
+  const b = Math.min(1, Math.max(0, color.b));
+
+  // Convierte los valores a sus representaciones hexadecimales
+  const rHex = Math.round(r * 255).toString(16).padStart(2, '0');
+  const gHex = Math.round(g * 255).toString(16).padStart(2, '0');
+  const bHex = Math.round(b * 255).toString(16).padStart(2, '0');
+
+  // Combina los valores hexadecimales en un solo valor hexadecimal
+  const hexColor = `#${rHex}${gHex}${bHex}`;
+
+  return hexColor;
+}
+
 
 const copyButton = document.getElementById("copy-button");
 const cutButton = document.getElementById("cut-button");
@@ -463,6 +590,71 @@ function removePart(part_id){
 function createNewModel(){
     window.location.reload();
 }
+
+
+
+  // Agregar un evento al botón de actualización de posición
+  updatePositionButton.addEventListener('click', updatePosition);
+
+  // Función para actualizar la posición del objeto seleccionado
+  function updatePosition() {
+      if (selectedMesh) {
+          const newX = parseFloat(positionXInput.value);
+          const newY = parseFloat(positionYInput.value);
+          const newZ = parseFloat(positionZInput.value);
+
+          if (!isNaN(newX) && !isNaN(newY) && !isNaN(newZ)) {
+              selectedMesh.position = new BABYLON.Vector3(newX, newY, newZ);
+          }
+          positionXInput.value = selectedMesh.position.x.toFixed(2);
+          positionYInput.value = selectedMesh.position.y.toFixed(2);
+          positionZInput.value = selectedMesh.position.z.toFixed(2);    
+      }
+
+  }
+
+// Agregar un evento al botón de actualización de rotación
+updateRotationButton.addEventListener('click', updateRotation);
+
+// Función para actualizar la rotación del objeto seleccionado
+function updateRotation() {
+    if (selectedMesh) {
+        const newXRotation = parseFloat(rotationXInput.value);
+        const newYRotation = parseFloat(rotationYInput.value);
+        const newZRotation = parseFloat(rotationZInput.value);
+
+        if (!isNaN(newXRotation) && !isNaN(newYRotation) && !isNaN(newZRotation)) {
+            selectedMesh.rotation = new BABYLON.Vector3(
+                BABYLON.Tools.ToRadians(newXRotation),
+                BABYLON.Tools.ToRadians(newYRotation),
+                BABYLON.Tools.ToRadians(newZRotation)
+            );
+        }
+    }
+}
+
+  // Agregar un evento al botón de actualización de color
+  updateColorButton.addEventListener('click', updateColor);
+
+  // Función para actualizar el color del objeto seleccionado
+  function updateColor() {
+      const selectedColor = colorPicker2.value; 
+
+      if (pickedMesh) {
+          pickedMesh.material = new BABYLON.StandardMaterial('material', scene);
+          pickedMesh.material.diffuseColor = new BABYLON.Color3.FromHexString(selectedColor);
+      }
+  }
+
+  // Agregar un evento al botón de actualización de color
+  setColorButton.addEventListener('click', setColor);
+    
+  // Función para actualizar el color del objeto seleccionado
+  function setColor() {
+    colorPicker.value = colorPicker2.value; 
+  }   
     </script>
 </body>
 </html>
+
+
