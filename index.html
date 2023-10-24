@@ -87,7 +87,7 @@
         <input type="number" id="positionY">
         <label for="positionZ">Z Pos:</label>
         <input type="number" id="positionZ">
-        <button id="updatePosition">Update Position</button>
+        <button id="updatePosition">Update Position (P)</button>
         <h2>Rotation</h2>
         <label for="rotationX">X:</label>
         <input type="number" id="rotationX">
@@ -95,12 +95,12 @@
         <input type="number" id="rotationY">
         <label for="rotationZ">Z:</label>
         <input type="number" id="rotationZ">
-        <button id="updateRotation">Update Rotation</button>
+        <button id="updateRotation">Update Rotation (O)</button>
         <h2>Modify Color</h2>
         <label for="colorPicker">Choose Color:</label>
         <input type="color" id="colorPicker2">
         <button id="updateColor">Update Color</button>
-        <button id="setColor">Set Color</button>
+        <button id="setColor">Set Color (C)</button>
       </div>
     </div>
   <canvas id="renderCanvas"></canvas>
@@ -223,6 +223,12 @@
                         const cushionMat = new BABYLON.StandardMaterial("cushionMat");
                         cushionMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/aprilspeight/workshop-babylonjs/gh-pages/textures/linen.jpg");
                         meshes[0].material = cushionMat;
+                        break;
+                        case 6:
+                        var alphaMat = new BABYLON.StandardMaterial("alphaMat", scene);
+                        alphaMat.material.diffuseColor = new BABYLON.Color3.FromHexString(rgbToHex(part.color[0].r*255, part.color[0].g*255, part.color[0].b*255));     
+                        alphaMat.material.alpha = 0.5;        
+                        meshes[0].material = alphaMat;                
                         break;
                     }
 
@@ -389,11 +395,14 @@ document.addEventListener("keydown", function (event) {
     if (event.key === "z") {
         changeColor();
     }
-    if (event.key === "x") {
+    if (event.key === "p") {
         updatePosition();
     }
-    if (event.key === "c") {
+    if (event.key === "o") {
         updateRotation();
+    }
+    if (event.key === "c") {
+        setColor();
     }
     if (event.ctrlKey) {
         if (event.key === 'c' || event.key === 'C') {
@@ -553,7 +562,7 @@ function loadFromFile() {
                     // Ajustar las coordenadas de inicio y fin de las conexiones
                     for (const part of parts) {
                         
-                        loadAndPositionPart(part, partsURL);
+                        loadAndPositionPart(part, partsURL,6);
                     } 
                     //console.log(jsonParts);
 
@@ -656,5 +665,7 @@ function updateRotation() {
     </script>
 </body>
 </html>
+
+
 
 
