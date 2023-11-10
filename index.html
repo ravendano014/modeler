@@ -102,6 +102,12 @@
         <button id="updateColor">Update Color</button>
         <button id="setColor">Set Color (C)</button>
       </div>
+      <div>
+        <label for="partSelector">Select Part:</label>
+        <select id="partSelector" onchange="selectPart()">
+          <!-- Opciones se llenarán dinámicamente desde el script -->
+        </select>
+      </div>
     </div>
   <canvas id="renderCanvas"></canvas>
   <script src="https://cdn.babylonjs.com/babylon.js"></script>
@@ -656,6 +662,39 @@ function updateRotation() {
   function setColor() {
     colorPicker.value = colorPicker2.value; 
   }   
+
+  // Obtener referencia al selector HTML
+const partSelector = document.getElementById('partSelector');
+
+// Función para llenar dinámicamente las opciones del selector
+function fillPartSelector() {
+  // Limpiar las opciones actuales
+  partSelector.innerHTML = '';
+
+  // Llenar con las opciones actuales
+  for (let i = 0; i < jsonParts[0].parts.length; i++) {
+    const part = jsonParts[0].parts[i];
+    const option = document.createElement('option');
+    option.value = part.mesh_id;
+    option.text = part.mesh_name;
+    partSelector.appendChild(option);
+  }
+}
+
+// Función para manejar el cambio de selección en el selector
+function selectPart() {
+  const selectedPartId = partSelector.value;
+  const selectedPart = jsonParts[0].parts.find(part => part.mesh_id === selectedPartId);
+
+  if (selectedPart) {
+    const selectedMesh = scene.getMeshByID(selectedPartId);
+    // Aplicar cambios según la parte seleccionada (por ejemplo, actualización de controles)
+    // ...
+  }
+}
+
+// Llenar las opciones del selector al cargar la página
+fillPartSelector();
     </script>
 </body>
 </html>
