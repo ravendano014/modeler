@@ -101,8 +101,7 @@
         <input type="color" id="colorPicker2">
         <button id="updateColor">Update Color</button>
         <button id="setColor">Set Color (C)</button>
-      </div>
-      <div>
+        <br>
         <label for="partSelector">Select Part:</label>
         <select id="partSelector" onchange="selectPart()">
           <!-- Opciones se llenarán dinámicamente desde el script -->
@@ -565,7 +564,8 @@ function loadFromFile() {
                         loadAndPositionPart(part, partsURL);
                     } 
                     //console.log(jsonParts);
-
+                    // Llenar las opciones del selector al cargar la página
+                    fillPartSelector();
                 } catch (error) {
                     console.error('Error al cargar el archivo:', error);
                 }
@@ -693,8 +693,7 @@ function selectPart() {
   }
 }
 
-// Llenar las opciones del selector al cargar la página
-fillPartSelector();
+
     </script>
 </body>
 </html>
