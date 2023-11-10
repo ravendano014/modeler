@@ -681,18 +681,23 @@ function fillPartSelector() {
   }
 }
 
-// Función para manejar el cambio de selección en el selector
 function selectPart() {
   const selectedPartId = partSelector.value;
   const selectedPart = jsonParts[0].parts.find(part => part.mesh_id === selectedPartId);
 
   if (selectedPart) {
+    // Actualizar las propiedades en la barra lateral
+    document.getElementById('name').textContent = selectedPart.mesh_name;
+    document.getElementById('position').textContent = `X: ${selectedPart.position[0].x.toFixed(2)}, Y: ${selectedPart.position[0].y.toFixed(2)}, Z: ${selectedPart.position[0].z.toFixed(2)}`;
+    document.getElementById('rotation').textContent = `X: ${selectedPart.rotation[0].x.toFixed(2)}, Y: ${selectedPart.rotation[0].y.toFixed(2)}, Z: ${selectedPart.rotation[0].z.toFixed(2)}`;
+    document.getElementById('color').textContent = `Color: R: ${selectedPart.color[0].r.toFixed(2)}, G: ${selectedPart.color[0].g.toFixed(2)}, B: ${selectedPart.color[0].b.toFixed(2)}`;
+
     const selectedMesh = scene.getMeshByID(selectedPartId);
-    // Aplicar cambios según la parte seleccionada (por ejemplo, actualización de controles)
-    // ...
+    if (selectedMesh) {
+      pickedMesh = selectedMesh;
+    }
   }
 }
-
 
     </script>
 </body>
