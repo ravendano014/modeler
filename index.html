@@ -695,6 +695,15 @@ function selectPart() {
     const selectedMesh = scene.getMeshByID(selectedPartId);
     if (selectedMesh) {
       pickedMesh = selectedMesh;
+      positionXInput.value = pickedMesh.position.x.toFixed(2);
+      positionYInput.value = pickedMesh.position.y.toFixed(2);
+      positionZInput.value = pickedMesh.position.z.toFixed(2);
+      document.getElementById("rotation").textContent = `X: ${BABYLON.Tools.ToDegrees(pickedMesh.rotation.x).toFixed(2)}°, Y: ${BABYLON.Tools.ToDegrees(pickedMesh.rotation.y).toFixed(2)}°, Z: ${BABYLON.Tools.ToDegrees(pickedMesh.rotation.z).toFixed(2)}°`;
+      rotationXInput.value = BABYLON.Tools.ToDegrees(pickedMesh.rotation.x).toFixed(2);
+      rotationYInput.value = BABYLON.Tools.ToDegrees(pickedMesh.rotation.y).toFixed(2);
+      rotationZInput.value = BABYLON.Tools.ToDegrees(pickedMesh.rotation.z).toFixed(2);
+      document.getElementById("color").textContent = `Color: ${pickedMesh.material ? pickedMesh.material.diffuseColor.toString() : "N/A"}`;
+      colorPicker2.value = rgbToHexDiffuse(pickedMesh.material.diffuseColor);
     }
   }
 }
