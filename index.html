@@ -703,7 +703,9 @@ function selectPart() {
       rotationZInput.value = BABYLON.Tools.ToDegrees(pickedMesh.rotation.z).toFixed(2);
       document.getElementById("color").textContent = `Color: ${pickedMesh.material ? pickedMesh.material.diffuseColor.toString() : "N/A"}`;
       colorPicker2.value = rgbToHexDiffuse(pickedMesh.material.diffuseColor);
+      selectedMesh = pickedMesh;
     }
+    
   }
 }
 
