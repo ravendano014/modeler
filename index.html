@@ -687,14 +687,13 @@ function selectPart() {
 
   if (selectedPart) {
     // Actualizar las propiedades en la barra lateral
-    document.getElementById('name').textContent = selectedPart.mesh_name;
-    document.getElementById('position').textContent = `X: ${selectedPart.position[0].x.toFixed(2)}, Y: ${selectedPart.position[0].y.toFixed(2)}, Z: ${selectedPart.position[0].z.toFixed(2)}`;
-    document.getElementById('rotation').textContent = `X: ${selectedPart.rotation[0].x.toFixed(2)}, Y: ${selectedPart.rotation[0].y.toFixed(2)}, Z: ${selectedPart.rotation[0].z.toFixed(2)}`;
-    document.getElementById('color').textContent = `Color: R: ${selectedPart.color[0].r.toFixed(2)}, G: ${selectedPart.color[0].g.toFixed(2)}, B: ${selectedPart.color[0].b.toFixed(2)}`;
 
     const selectedMesh = scene.getMeshByID(selectedPartId);
     if (selectedMesh) {
       pickedMesh = selectedMesh;
+      document.getElementById("name").textContent = pickedMesh.name;
+      document.getElementById("selectedname").textContent = pickedMesh.name;
+      document.getElementById("position").textContent = `X: ${pickedMesh.position.x.toFixed(2)}, Y: ${pickedMesh.position.y.toFixed(2)}, Z: ${pickedMesh.position.z.toFixed(2)}`;
       positionXInput.value = pickedMesh.position.x.toFixed(2);
       positionYInput.value = pickedMesh.position.y.toFixed(2);
       positionZInput.value = pickedMesh.position.z.toFixed(2);
